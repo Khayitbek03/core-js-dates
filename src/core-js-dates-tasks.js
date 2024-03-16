@@ -74,12 +74,12 @@ function getDayName(date) {
  * Date('2024-02-16T00:00:00Z') => Date('2024-02-23T00:00:00Z')
  */
 function getNextFriday(date) {
-  const currentDay = date.getDay();
-  let daysToFriday = (5 - currentDay + 7) % 7;
-  daysToFriday = daysToFriday === 0 ? 7 : daysToFriday;
-  const nextFriday = new Date(date);
-  nextFriday.setDate(date.getDate() + daysToFriday);
-  return nextFriday;
+  const nextDay = new Date(date);
+  nextDay.setUTCDate(nextDay.getUTCDate() + 1);
+  while (nextDay.getUTCDay() !== 5) {
+    nextDay.setUTCDate(nextDay.getUTCDate() + 1);
+  }
+  return nextDay;
 }
 
 /**
@@ -272,12 +272,12 @@ function getWorkSchedule(period, countWorkDays, countOffDays) {
     if (isWorked) {
       for (let i = 0; i < countWorkDays && day <= endPeriod; i += 1) {
         schedule.push(day.toJSON());
-        day = new Date(day.setDate(day.getDate() + 1));
+        day = new Date(day.setDate(day.getUTCDate() + 1));
       }
       isWorked = false;
     }
     if (!isWorked) {
-      day = new Date(day.setDate(day.getDate() + countOffDays));
+      day = new Date(day.setDate(day.getUTCDate() + countOffDays));
       isWorked = true;
     }
   }
